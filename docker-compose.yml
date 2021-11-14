@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:5.0.2
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+    ports:
+      - $MONGODB_PORT:$MONGODB_PORT
+    volumes:
+      - db:/data/db
+    networks:
+      - backend
+
+  server:
+    depends_on:
+      - mongodb
+    build: ./server
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_USER=$MONGODB_USER
+      - MONGODB_PASSWORD=$MONGODB_PASSWORD
+      - MONGODB_NAME=$MONGODB_NAME
+      - MONGODB_PORT=$MONGODB_PORT
+      - CLIENT_ORIGIN=$CLIENT_ORIGIN
+    networks:
+      - backend
+      - frontend
+
+  client:
+    depends_on:
+      - server
+    build:
+      context: ./client
+      args:
+        - SERVER_API_URL=$CLIENT_BASE_URL
+    ports:
+      - $CLIENT_PORT:$NGINX_PORT
+    networks:
+      - frontend
+
+volumes:
+  db:
+
+networks:
+  backend:
+  frontend:

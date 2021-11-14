@@ -1,0 +1,17 @@
+{
+  "name": "fullstack",
+  "version": "1.0.0",
+  "main": "index.js",
+ "scripts": {
+    "install-server": "yarn install --prefix server",
+    "install-client": "yarn install --prefix client",
+    "install-both": "yarn run install-server && yarn run install-client",
+    "client": "yarn --cwd client start",
+    "server": "yarn --cwd server run watch",
+    "mongodb": "docker run --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=pa55w0rd -v mongodb_data:/data/db mongo"
+  },
+  "keywords": [],
+  "author": "raymondcuya@gmail.com",
+  "license": "ISC",
+  "description": ""
+}
