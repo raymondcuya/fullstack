@@ -9,7 +9,6 @@ const {
 } = process.env;
 
 const MONGO_URL = `mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_NAME}?authSource=admin`;
-console.log('mongo url', MONGO_URL);
 mongoose.connection.once('open', () => {
   console.log('MongoDB connection ready!');
 });
@@ -19,10 +18,13 @@ mongoose.connection.on('error', (err) => {
 });
 
 async function mongoConnect() {
-  await mongoose.connect(MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  await mongoose.connect(
+    process.env.NODE_ENV === 'test' ? global.__DB_URL__ : MONGO_URL,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  );
 }
 
 async function mongoDisconnect() {
